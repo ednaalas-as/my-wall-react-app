@@ -14,7 +14,7 @@ export function TopBar({ user }: { user: CurrentUser | null }) {
       >
         <Link
           href="/"
-          className="mr-auto py-1.5 text-[22px] font-bold tracking-tight text-white hover:no-underline"
+          className="mr-auto py-1.5 text-[17px] font-bold tracking-tight text-white hover:no-underline sm:text-[22px]"
         >
           {siteName}
         </Link>

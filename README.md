@@ -1,4 +1,4 @@
-# my wall
+# The Great Wall of Edna
 
 A nostalgic, late-2000s style message wall built with **Next.js, React, TypeScript, Tailwind CSS and Supabase**.
 
@@ -164,7 +164,7 @@ Open http://localhost:3000.
 | `npm run build` | Production build |
 
 ### 9. Personalise
-Edit `lib/site-config.ts` (name, status, info) and replace `public/profile-placeholder.svg` with your own photo. If you use a `.jpg`/`.png`, put it in `public/` and update `photo` in the config.
+Edit `lib/site-config.ts` (site name, owner name, status, info) and replace `public/profile-placeholder.svg` with your own photo. If you use a `.jpg`/`.png`, put it in `public/` and update `photo` in the config.
 
 ## Deployment (Vercel)
 1. Push the repository to GitHub.

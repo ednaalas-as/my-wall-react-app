@@ -43,8 +43,14 @@ export function useLivePosts(initialPosts: Post[], filterUserId?: string) {
   // Realtime subscription.
   useEffect(() => {
     const supabase = getSupabaseBrowserClient();
+    // Status callbacks from a channel we already removed (e.g. "CLOSED" after
+    // unmount) must not overwrite the state of the current subscription.
+    let active = true;
+    // A unique topic per subscription: supabase-js reuses a channel with the
+    // same topic, which would hand a remount the channel being torn down.
+    const topic = `wall-posts:${filterUserId ?? "all"}:${Math.random().toString(36).slice(2)}`;
     const channel = supabase
-      .channel(`wall-posts:${filterUserId ?? "all"}`)
+      .channel(topic)
       .on(
         "postgres_changes",
         {
@@ -56,6 +62,7 @@ export function useLivePosts(initialPosts: Post[], filterUserId?: string) {
         (payload) => addPosts([payload.new as Post]),
       )
       .subscribe((status) => {
+        if (!active) return;
         if (status === "SUBSCRIBED") {
           setConnection("live");
           if (hasDisconnected.current) {
@@ -73,6 +80,7 @@ export function useLivePosts(initialPosts: Post[], filterUserId?: string) {
       });
 
     return () => {
+      active = false;
       void supabase.removeChannel(channel);
     };
   }, [addPosts, filterUserId, refresh]);
