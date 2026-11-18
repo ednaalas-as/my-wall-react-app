@@ -2,6 +2,8 @@
 
 **Live demo:** https://my-wall-react-app-gamma.vercel.app
 
+Deployed on Vercel. Every push to `main` redeploys automatically.
+
 A nostalgic, late-2000s style message wall built with **Next.js, React, TypeScript, Tailwind CSS and Supabase**.
 
 Anyone can open the wall, type a message and press **Share**: no account needed. Visitors who want to keep track of what they've written can optionally sign up, and get a personal **My Posts** history that follows them across sessions and devices.
