@@ -103,11 +103,14 @@ npm install
 2. Choose a name, a strong database password (keep it to yourself) and a nearby region.
 3. Wait for the project to finish provisioning.
 
-### 4. Run the SQL migration
-1. Open **SQL Editor → New query**.
-2. Paste the whole of [`supabase/migrations/20261118000000_init_wall.sql`](supabase/migrations/20261118000000_init_wall.sql) and click **Run**.
+### 4. Run the SQL migrations
+Run each file in `supabase/migrations/` **in order**: open **SQL Editor → New query**, paste the file, and click **Run**.
+1. [`20261118000000_init_wall.sql`](supabase/migrations/20261118000000_init_wall.sql): tables, triggers, RLS, grants and Realtime.
+2. [`20261118010000_lock_down_trigger_functions.sql`](supabase/migrations/20261118010000_lock_down_trigger_functions.sql): stops the trigger functions from being callable as RPC endpoints.
 
-It creates the following. The script is safe to run again.
+If you use the Supabase CLI, you can apply both with `supabase link --project-ref <ref>` and then `supabase db push`.
+
+Together they create the following. Both scripts are safe to run again.
 
 | Object | Purpose |
 |---|---|
@@ -136,8 +139,8 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=<publishable-or-anon-key>
 
 ### 6. Authentication settings
 In **Authentication → Sign In / Providers → Email**, make sure Email is enabled.
-- **Confirm email ON** (the default): new users get a link and must click it before logging in. The app shows a "check your email" message.
-- **Confirm email OFF**: users are logged in straight after signing up.
+- **Confirm email OFF** (used by the live demo): users are logged in straight after signing up.
+- **Confirm email ON**: new users get a link and must click it before logging in. The app shows a "check your email" message. Supabase's built-in mailer only delivers to members of your Supabase team, so set up custom SMTP before turning this on for the public.
 
 In **Authentication → URL Configuration**:
 - **Site URL**: your production URL, e.g. `https://my-wall-react-app.vercel.app`
