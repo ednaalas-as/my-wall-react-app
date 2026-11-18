@@ -4,7 +4,7 @@ import type { Database, Post } from "@/types/database";
 export const MAX_MESSAGE_LENGTH = 280;
 export const MAX_NAME_LENGTH = 40;
 export const FEED_LIMIT = 50;
-export const POST_COLUMNS = "id, user_id, author_name, message, created_at";
+export const POST_COLUMNS = "id, user_id, author_name, author_avatar_path, message, created_at";
 
 /** Returns an error message, or null when the message can be posted. */
 export function validateMessage(message: string): string | null {

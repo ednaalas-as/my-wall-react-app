@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { avatarUrl } from "@/lib/avatars";
 import type { Post } from "@/types/database";
 import { TimeAgo } from "./TimeAgo";
 
@@ -10,18 +11,22 @@ type PostItemProps = {
 
 export function PostItem({ post, isOwn, highlight = false }: PostItemProps) {
   const isMember = post.user_id !== null;
+  // The photo the author had when this post was published.
+  const photo =
+    avatarUrl(post.author_avatar_path) ??
+    (isMember ? "/avatar-member.svg" : "/avatar-guest.svg");
 
   return (
     <li
       className={`flex gap-3 border-b border-wall-rule py-3 ${highlight ? "post-enter" : ""}`}
     >
       <Image
-        src={isMember ? "/avatar-member.svg" : "/avatar-guest.svg"}
+        src={photo}
         alt=""
         width={50}
         height={50}
         unoptimized
-        className="h-[50px] w-[50px] shrink-0 border border-wall-line"
+        className="h-[50px] w-[50px] shrink-0 border border-wall-line object-cover"
       />
       <div className="min-w-0 flex-1">
         <p className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">

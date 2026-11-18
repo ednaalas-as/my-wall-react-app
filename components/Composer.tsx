@@ -2,12 +2,7 @@
 
 import { useId, useRef, useState, type FormEvent, type KeyboardEvent } from "react";
 import { getSupabaseBrowserClient } from "@/lib/supabase/client";
-import {
-  MAX_MESSAGE_LENGTH,
-  MAX_NAME_LENGTH,
-  POST_COLUMNS,
-  validateMessage,
-} from "@/lib/posts";
+import { MAX_MESSAGE_LENGTH, POST_COLUMNS, validateMessage } from "@/lib/posts";
 import { useGuestName } from "@/hooks/useGuestName";
 import type { CurrentUser, Post } from "@/types/database";
 
@@ -33,11 +28,10 @@ export function Composer({ currentUser, onPosted }: ComposerProps) {
   const [submitting, setSubmitting] = useState(false);
   const [feedback, setFeedback] = useState<Feedback>(null);
   const inFlight = useRef(false);
-  const { guestName, setGuestName } = useGuestName();
+  const guestName = useGuestName();
 
   const messageId = useId();
   const counterId = useId();
-  const nameId = useId();
   const feedbackId = useId();
 
   const remaining = MAX_MESSAGE_LENGTH - message.length;
@@ -57,14 +51,13 @@ export function Composer({ currentUser, onPosted }: ComposerProps) {
     setSubmitting(true);
     setFeedback(null);
 
-    const name = guestName.trim().slice(0, MAX_NAME_LENGTH);
     const supabase = getSupabaseBrowserClient();
     const { data, error } = await supabase
       .from("posts")
       .insert(
         currentUser
           ? { message, user_id: currentUser.id }
-          : { message, user_id: null, author_name: name || "Guest" },
+          : { message, user_id: null, author_name: guestName },
       )
       .select(POST_COLUMNS)
       .single();
@@ -120,26 +113,12 @@ export function Composer({ currentUser, onPosted }: ComposerProps) {
       />
 
       <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-2">
-        {currentUser ? (
-          <p className="text-[11px] text-wall-muted">
-            Posting as <span className="font-bold text-wall-text">{currentUser.displayName}</span>
-          </p>
-        ) : (
-          <div className="flex items-center gap-1.5">
-            <label htmlFor={nameId} className="whitespace-nowrap text-[11px] text-wall-muted">
-              Your name
-            </label>
-            <input
-              id={nameId}
-              value={guestName}
-              onChange={(event) => setGuestName(event.target.value)}
-              maxLength={MAX_NAME_LENGTH}
-              placeholder="Guest"
-              autoComplete="nickname"
-              className="input-wall w-36 py-1 text-[12px]"
-            />
-          </div>
-        )}
+        <p className="text-[11px] text-wall-muted">
+          Posting as{" "}
+          <span className="font-bold text-wall-text">
+            {currentUser ? currentUser.displayName : guestName}
+          </span>
+        </p>
 
         <span
           id={counterId}

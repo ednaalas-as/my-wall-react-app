@@ -14,6 +14,7 @@ export type Database = {
           author_name: string;
           message: string;
           created_at: string;
+          author_avatar_path: string | null;
         };
         Insert: {
           id?: string;
@@ -29,6 +30,7 @@ export type Database = {
         Row: {
           id: string;
           display_name: string;
+          avatar_path: string | null;
           created_at: string;
         };
         Insert: {
@@ -38,6 +40,7 @@ export type Database = {
         };
         Update: {
           display_name?: string;
+          avatar_path?: string | null;
         };
         Relationships: [];
       };
@@ -57,5 +60,7 @@ export type CurrentUser = {
   id: string;
   email: string | null;
   displayName: string;
+  /** Public URL of the member's photo, or null for the default silhouette. */
+  avatarUrl: string | null;
   memberSince: string | null;
 };

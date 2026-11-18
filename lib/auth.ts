@@ -1,6 +1,7 @@
 import "server-only";
 import { cache } from "react";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { avatarUrl } from "@/lib/avatars";
 import type { CurrentUser } from "@/types/database";
 
 /**
@@ -18,7 +19,7 @@ export const getCurrentUser = cache(async (): Promise<CurrentUser | null> => {
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("display_name, created_at")
+    .select("display_name, avatar_path, created_at")
     .eq("id", userId)
     .maybeSingle();
 
@@ -26,6 +27,7 @@ export const getCurrentUser = cache(async (): Promise<CurrentUser | null> => {
     id: userId,
     email,
     displayName: profile?.display_name ?? email?.split("@")[0] ?? "Member",
+    avatarUrl: avatarUrl(profile?.avatar_path),
     memberSince: profile?.created_at ?? null,
   };
 });

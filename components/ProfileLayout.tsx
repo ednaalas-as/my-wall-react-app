@@ -1,8 +1,8 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { wallOwner } from "@/lib/site-config";
 import type { CurrentUser } from "@/types/database";
 import { AccountBox, ProfileCard } from "./ProfileSidebar";
+import { ViewerHeading } from "./ViewerHeading";
 
 type Tab = "wall" | "my-posts";
 
@@ -25,16 +25,11 @@ export function ProfileLayout({
     // Mobile: profile, then the wall, then the account box.
     <div className="mx-auto grid w-full max-w-[980px] gap-6 px-4 py-5 md:grid-cols-[200px_minmax(0,1fr)] md:grid-rows-[auto_1fr]">
       <div className="md:col-start-1 md:row-start-1">
-        <ProfileCard />
+        <ProfileCard user={user} />
       </div>
 
       <main id="main" className="min-w-0 md:col-start-2 md:row-span-2 md:row-start-1">
-        <div className="border-b border-wall-line pb-3">
-          <h1 className="text-[20px] font-bold leading-tight text-wall-text">{wallOwner.name}</h1>
-          <p className="mt-1 text-[13px]">
-            <span className="font-bold">{wallOwner.name}</span> {wallOwner.status}
-          </p>
-        </div>
+        <ViewerHeading user={user} />
 
         <nav aria-label="Profile sections" className="mt-3 flex gap-1 border-b border-wall-border">
           {tabs.map((tab) => {
