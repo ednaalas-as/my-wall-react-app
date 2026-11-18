@@ -25,14 +25,21 @@ Anyone can open the wall, type a message and press **Share**: no account needed.
 
 **Guests (no login)**
 - Read and post immediately, with an optional display name (defaults to "Guest").
-- Guest posts are saved with `user_id = NULL`.
+- The name can be changed at any time and applies to the guest's next posts.
+- It is remembered only for the current browser tab session, and resets when the tab is closed.
+- Guest posts are saved with `user_id = NULL` and never linked to an account.
 
 **Optional accounts**
+
+Registering is deliberately simple. There is no post editing, deleting or profile customisation. The only extras are a persistent identity, a changeable display name and a My Posts history.
+
 - Sign up (display name, email, password, confirmation), log in, log out, built on Supabase Auth.
 - Supports email confirmation when it's turned on in Supabase.
 - Sessions persist across refreshes and are refreshed on each request by `proxy.ts`.
 - An expired session falls back to the guest view cleanly.
 - Members' posts are saved with `user_id = auth.uid()` and carry their profile name, which can't be spoofed.
+- Members can change their display name at any time with **(change name)** in the account box. The new name is saved in Supabase, so it follows them across sessions and devices.
+- Changing the name updates only the `profiles` row. The account and its user ID stay the same, so every post stays linked to it. Posts already on the wall keep the name they were published with; the new name applies to future posts only.
 - **My Posts** (`/my-posts`) lists only the signed-in user's posts, updates live, and is redirected to login for guests.
 
 **Quality**
@@ -66,6 +73,7 @@ app/
 components/
   ProfileLayout.tsx      Profile page frame (photo, name, tabs)
   ProfileSidebar.tsx     Profile card + account box
+  DisplayNameForm.tsx    Members' "change name" form
   Wall.tsx               Composer + live feed (client)
   Composer.tsx           Message form with validation and counter
   PostItem.tsx           One wall post
@@ -73,7 +81,7 @@ components/
   AuthForm.tsx AuthCard.tsx LogoutButton.tsx AuthListener.tsx TopBar.tsx
 hooks/
   useLivePosts.ts        Realtime subscription, de-dupe, reconnect + polling fallback
-  useGuestName.ts        Remembers a guest's display name in this browser (convenience only)
+  useGuestName.ts        Remembers a guest's display name for this tab session (sessionStorage)
 lib/
   supabase/              The only place Supabase clients are created (browser, server, proxy)
   auth.ts                getCurrentUser(): verified session → user
@@ -184,7 +192,9 @@ Every push to `main` redeploys automatically.
 |---|---|---|
 | Needs an account | No | Yes (optional) |
 | `user_id` | `NULL` | `auth.uid()` |
-| `author_name` | What the guest typed, or "Guest" | Their profile display name, set by the database |
+| `author_name` | What the guest typed, or "Guest" | Their profile display name at the moment of posting, set by the database |
+| Display name | Changeable; kept for the current tab session only | Changeable; saved to their profile and kept across sessions and devices |
+| Renaming affects | Future posts only | Future posts only. Past posts keep their original name, and the user ID never changes |
 | Shown as | "Guest" | "Member", or "You" on your own posts |
 | My Posts | Not available | Every post, newest first, on any device |
 

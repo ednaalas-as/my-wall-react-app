@@ -2,34 +2,34 @@
 
 import { useCallback, useState, useSyncExternalStore } from "react";
 
-// A convenience only: remembers the name a guest typed, in this browser.
+// A guest's display name lives only in this browser tab's session
+// (sessionStorage): it survives a reload but resets when the tab is closed.
 // Posts themselves always live in Supabase.
-const STORAGE_KEY = "my-wall:guest-name";
+const STORAGE_KEY = "great-wall:guest-name";
 
 function readStored() {
   try {
-    return window.localStorage.getItem(STORAGE_KEY) ?? "";
+    return window.sessionStorage.getItem(STORAGE_KEY) ?? "";
   } catch {
     return "";
   }
 }
 
-function subscribe(onChange: () => void) {
-  window.addEventListener("storage", onChange);
-  return () => window.removeEventListener("storage", onChange);
-}
+// sessionStorage is per tab, so there is nothing to subscribe to.
+const subscribe = () => () => {};
 
 export function useGuestName() {
   const stored = useSyncExternalStore(subscribe, readStored, () => "");
   const [draft, setDraft] = useState<string | null>(null);
 
-  const remember = useCallback((name: string) => {
+  const setGuestName = useCallback((name: string) => {
+    setDraft(name);
     try {
-      window.localStorage.setItem(STORAGE_KEY, name);
+      window.sessionStorage.setItem(STORAGE_KEY, name);
     } catch {
-      // Private mode or blocked storage: nothing to remember.
+      // Private mode or blocked storage: the name still works for this page.
     }
   }, []);
 
-  return { guestName: draft ?? stored, setGuestName: setDraft, rememberGuestName: remember };
+  return { guestName: draft ?? stored, setGuestName };
 }

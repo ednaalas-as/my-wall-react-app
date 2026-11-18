@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { wallOwner } from "@/lib/site-config";
 import type { CurrentUser } from "@/types/database";
+import { DisplayNameForm } from "./DisplayNameForm";
 import { LogoutButton } from "./LogoutButton";
 
 const memberSinceFormat = new Intl.DateTimeFormat("en-US", {
@@ -51,9 +52,7 @@ export function AccountBox({ user }: { user: CurrentUser | null }) {
         </h2>
         {user ? (
           <div className="space-y-2 px-2 py-2 text-[12px]">
-            <p>
-              Logged in as <span className="font-bold">{user.displayName}</span>
-            </p>
+            <DisplayNameForm userId={user.id} displayName={user.displayName} />
             {user.email && <p className="break-all text-wall-muted">{user.email}</p>}
             {user.memberSince && (
               <p className="text-wall-muted">

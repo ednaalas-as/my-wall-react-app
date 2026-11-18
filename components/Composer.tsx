@@ -33,7 +33,7 @@ export function Composer({ currentUser, onPosted }: ComposerProps) {
   const [submitting, setSubmitting] = useState(false);
   const [feedback, setFeedback] = useState<Feedback>(null);
   const inFlight = useRef(false);
-  const { guestName, setGuestName, rememberGuestName } = useGuestName();
+  const { guestName, setGuestName } = useGuestName();
 
   const messageId = useId();
   const counterId = useId();
@@ -77,7 +77,6 @@ export function Composer({ currentUser, onPosted }: ComposerProps) {
       return;
     }
 
-    if (!currentUser) rememberGuestName(name);
     onPosted(data);
     setMessage("");
     setFeedback({ kind: "success", text: "Your post was shared." });
